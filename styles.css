@@ -1,0 +1,29 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    /* background-color: grey;*/
+    align-items: center;
+    justify-content: center;
+}
+
+button {
+    padding: 5px;
+    font-family: Verdana, 'Times New Roman';
+}
+
+.toph1 {
+    font-size: 40px;
+    font-family: Verdana, 'Times New Roman'
+}
+
+.container {
+    box-sizing: border-box;
+    width: min(1000px,80vw);
+    height: min(1200px,96vw);
+    border: 5px solid black;
+}
