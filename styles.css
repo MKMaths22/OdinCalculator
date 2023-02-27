@@ -37,7 +37,7 @@ button {
 
 .display {
     width: 90%;
-    height: 12vw;
+    height: min(12vw,120px);
     background-color: rgb(200,200,200);
 }
 
@@ -77,17 +77,15 @@ button {
 
 }
 
-.calcbutton.times {
+.calcbutton.times, .calcbutton.divide, .calcbutton.plus, .calcbutton.minus {
     font-size: min(50px,5vw);
+    background-color: rgb(210, 145, 100);
 }
 
-.calcbutton.divide {
-    font-size: min(50px,5vw);
-}
 
-.calcbutton.minus {
-    font-size: min(50px,5vw);
-}
+
+
+
 
 .calcbutton.point {
     font-size: min(50px,5vw);

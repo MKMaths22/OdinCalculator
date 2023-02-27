@@ -40,7 +40,45 @@ case('Add'):
 
 }
 
-console.log(Operate(3,'Divide',0));
-console.log(Operate(2,'Multiply',3));
-console.log(Operate(3,'Subtract',-4));
-console.log(Operate(2, 'Add', 999));
+let display = document.querySelector('.displaypara');
+let displayString = display.textContent;
+console.log(displayString);
+let displayNumber = +displayString;
+console.log(displayNumber);
+
+let zero = document.querySelector('#zero');
+let one = document.querySelector('#one');
+let two = document.querySelector('#two');
+
+function addOneDigit(string,digit) 
+{
+  if (string === '0') newString = digit;
+  else
+    if (string.length < 12) newString = string + digit;
+    else newString = string;
+  console.log(`newString equals ${newString}`);
+  return newString;
+}
+
+one.addEventListener('click',() => {
+    displayString = addOneDigit(displayString,'1');
+    displayNumber = +displayString;
+    console.log(displayNumber);
+    display.textContent = displayString;
+});
+
+zero.addEventListener('click',() => {
+    displayString = addOneDigit(displayString,'0');
+    displayNumber = +displayString;
+    display.textContent = displayString;
+    console.log(displayNumber);
+
+})
+
+two.addEventListener('click',() => {
+    displayString = addOneDigit(displayString,'2');
+    displayNumber = +displayString;
+    console.log(displayNumber);
+    display.textContent = displayString;
+
+})
