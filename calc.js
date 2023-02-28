@@ -22,16 +22,16 @@ function Divide(a,b)
 function Operate(a,func,b)
 {
 switch(func) {
-case('Add'):
+case('plus'):
  return Add(a,b);
 
- case('Multiply'):
+ case('times'):
  return Multiply(a,b);
 
- case('Subtract'):
+ case('minus'):
  return Subtract(a,b);
 
- case('Divide'):
+ case('divide'):
  return Divide(a,b);
 
  default: return 'Error: Operation not recognised.'
@@ -186,7 +186,44 @@ function delClicked()
 
 }
 
-point.addEventListener('click',() => pointClicked());
+times.addEventListener('click', () => funcClicked('times'));
+divide.addEventListener('click', () => funcClicked('divide'));
+plus.addEventListener('click', () => funcClicked('plus'));
+minus.addEventListener('click', () => funcClicked('minus'));
+
+function funcClicked(func)
+{
+ switch(stateOfCalc)
+ {
+    case('answerShowing'):
+      operator = func;
+      firstNumber = answerNumber;
+      stateOfCalc = 'needSecondNumber';
+      break;
+    
+    case('needSecondNumber'):
+      display.textContent = 'Syntax Error!';
+      stateOfCalc = 'errorState';
+      break;
+
+    case('inputtingFirstNumber'):
+      operator = func;
+      stateOfCalc = 'needSecondNumber';
+      break;
+
+    case('inputtingSecondNumber'):
+      //now the previous calculation needs to be completed and displayed, 
+      //except for division by zero case as usual,
+      //and the new firstNumber is THEN set to equal answerNumber
+      //with operator set to be 'times' and stateofCalc = 'needSecondNumber'
+    
+    case('errorState'):
+      //nothing happens here
+
+    }
+}
+
+//point.addEventListener('click',() => pointClicked());
 //Quite a bit of extra logic has to be included to let people input decimals. The code below DOES NOT WORK because the
 //conversion from strings to numbers doesn't work when there are points in the strings (except at the end).
 //Also we will have to keep track of whether there is a decimal point in the number already or not, etc..
