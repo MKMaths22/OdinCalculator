@@ -73,73 +73,115 @@ let operator = 'none';
 let stateOfCalc = 'answerShowing';
 //possible states also include 'inputtingFirstNumber' 'needSecondNumber' 'inputtingSecondNumber' 'errorState'
 
-function addOneDigit(string,digit) 
+function addOneDigit(string,singleDigitString) 
 {
-  if (string === '0') newString = digit;
+  if (string === '0') newString = singleDigitString;
   else
-    if (string.length < 12) newString = string + digit;
+    if (string.length < 12) newString = string + singleDigitString;
     else newString = string;
   return newString;
 }
 
-one.addEventListener('click',() => {
-    switch(stateOfCalc) {
-    case 'errorState':
-        //this key should do nothing in this case
-        break;
-    case 'answerShowing':
-        //we have started keying in the first number of a new calculation
-        stateOfCalc = 'inputtingFirstNumber';
-        displayString = '1';
-        displayNumber = 1;
-        firstString = '1';
-        firstNumber = 1;
-        display.textContent = '1';
-        break;
-    case 'inputtingFirstNumber':
-        //we were already keying in first number of a new calculation
-        firstString = addOneDigit(firstString,'1');
-        firstNumber = +firstString;
-        displayString = firstString;
-        displayNumber = firstNumber;
-        display.textContent = firstString;
-        break;
-    case 'needSecondNumber':
-        //we are starting keying in the second number of the calculation
-        stateOfCalc = 'inputtingSecondNumber';
-        displayString = '1';
-        displayNumber = 1;
-        secondString = '1';
-        secondNumber = 1;
-        display.textContent = '1';
-        break;
-    case 'inputtingSecondNumber':
-        //we were already keying in the second number of the calculation
-        secondString = addOneDigit(secondString,'1');
-        secondNumber = +secondString;
-        displayNumber = secondNumber;
-        display.textContent = secondString;
-        break;
-    }
+one.addEventListener('click',() => {digitClicked(1)});
+two.addEventListener('click',() => {digitClicked(2)});
+three.addEventListener('click',() => {digitClicked(3)});
+four.addEventListener('click',() => {digitClicked(4)});
+five.addEventListener('click',() => {digitClicked(5)});
+six.addEventListener('click',() => {digitClicked(6)});
+seven.addEventListener('click',() => {digitClicked(7)});
+eight.addEventListener('click',() => {digitClicked(8)});
+nine.addEventListener('click',() => {digitClicked(9)});
+zero.addEventListener('click',() => {digitClicked(0)});
     
-});
+function digitClicked(digit) 
+{
+   let digitString = String(digit);
+   console.log(`digitString = ${digitString}`);
+    switch(stateOfCalc) {
+      case 'errorState':
+        //this key should do nothing in this case
+          break;
+      case 'answerShowing':
+        //we have started keying in the first number of a new calculation
+          stateOfCalc = 'inputtingFirstNumber';
+          displayString = digitString;
+          displayNumber = digit;
+          firstString = digitString;
+          firstNumber = digit;
+          display.textContent = digitString;
+          break;
+      case 'inputtingFirstNumber':
+        //we were already keying in first number of a new calculation
+          firstString = addOneDigit(firstString,digitString);
+          firstNumber = +firstString;
+          displayString = firstString;
+          displayNumber = firstNumber;
+          display.textContent = firstString;
+          break;
+      case 'needSecondNumber':
+        //we are starting keying in the second number of the calculation
+          stateOfCalc = 'inputtingSecondNumber';
+          displayString = digitString;
+          displayNumber = digit;
+          secondString = digitString;
+          secondNumber = digit;
+          display.textContent = digitString;
+          break;
+      case 'inputtingSecondNumber':
+        //we were already keying in the second number of the calculation
+          secondString = addOneDigit(secondString,digitString);
+          secondNumber = +secondString;
+          displayNumber = secondNumber;
+          display.textContent = secondString;
+          break;
+    }
+}    
 
+clear.addEventListener('click', () => restoreInitial());
 
+function restoreInitial() 
+{
+  display.textContent = '0';
+  firstNumber = 0;
+  firstString = '0';
+  secondNumber = undefined;
+  secondString = undefined;
+  answerNumber = 0;
+  answerString = '0';
+  operator = 'none';
+  stateOfCalc = 'answerShowing';
+}
 
+del.addEventListener('click', () => delClicked());
 
+function delClicked()
+{
+  switch(stateOfCalc) 
+  {
+  case 'inputtingFirstNumber':
+    if (firstString.length > 0) 
+    { firstString = firstString.slice(0,-1);
+      if (firstString === '') firstString = '0';
+      //prevents string from being empty so Del on '3' should result in '0'
+      firstNumber = +firstString;
+      displayNumber = firstNumber;
+      displayString = firstString;
+      display.textContent = firstString;
+    }
+    break;
+  case 'inputtingSecondNumber':
+    if (secondString.length > 0)
+    { secondString = secondString.slice(0,-1);
+      if (secondString === '') secondString = '0';
+      //as above, prevents string from being empty
+      secondNumber = +secondString;
+      displayNumber = secondNumber;
+      displayString = secondString;
+      display.textContent = secondString;
 
+    }
+    break;
+    //for the other three states of the calculator, the Del button does nothing
+  }
 
-
-
-zero.addEventListener('click',() => {
-    displayString = addOneDigit(displayString,'0');
-    displayNumber = +displayString;
-    display.textContent = displayString;
-})
-
-two.addEventListener('click',() => {
-    displayString = addOneDigit(displayString,'2');
-    displayNumber = +displayString;
-    display.textContent = displayString;
-
-})
+}
