@@ -185,3 +185,46 @@ function delClicked()
   }
 
 }
+
+point.addEventListener('click',() => pointClicked());
+//Quite a bit of extra logic has to be included to let people input decimals. The code below DOES NOT WORK because the
+//conversion from strings to numbers doesn't work when there are points in the strings (except at the end).
+//Also we will have to keep track of whether there is a decimal point in the number already or not, etc..
+//function pointClicked()
+//{
+//  switch(stateOfCalc)
+ // {
+ // case('answerShowing'):
+ //   firstString = '0.';
+ //   firstNumber = 0;
+  //  stateOfCalc = 'inputtingFirstNumber';
+  //  displayString = '0.';
+  //  display.textContent = displayString;
+  //  break;
+
+//  case('inputtingFirstNumber'):
+//     firstString += '.';
+ //    firstNumber = +firstString;
+ //    console.log(`firstNumber = ${firstNumber}`);
+ //    displayString = firstString;
+ //    displayNumber = firstNumber;
+ //    display.textContent = displayString;
+ //    break;
+  
+ // case('needNewNumber'):
+ //   secondString = '0.';
+ //   secondNumber = 0;
+ //   stateOfCalc = 'inputtingSecondNumber';
+  //  displayString = secondString;
+  //  display.textContent = displayString;
+ //   break;
+
+//  case('inputtingSecondNumber'):
+ //   secondString += '.';
+ //   secondNumber = +secondString;
+ //   displayString = secondString;
+ //   display.textContent = displayString;
+ //   break;
+
+ // }
+//}
