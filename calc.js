@@ -63,6 +63,16 @@ let divide = document.querySelector('#divide');
 let del = document.querySelector('#del');
 let clear = document.querySelector('#clear');
 
+let firstNumber = 0;
+let firstString = '0';
+let secondNumber;
+let secondString;
+let answerNumber = 0;
+let answerString = '0';
+let operator = 'none';
+let stateOfCalc = 'answerShowing';
+//possible states also include 'inputtingFirstNumber' 'needSecondNumber' 'inputtingSecondNumber' 'errorState'
+
 function addOneDigit(string,digit) 
 {
   if (string === '0') newString = digit;
@@ -73,10 +83,53 @@ function addOneDigit(string,digit)
 }
 
 one.addEventListener('click',() => {
-    displayString = addOneDigit(displayString,'1');
-    displayNumber = +displayString;
-    display.textContent = displayString;
+    switch(stateOfCalc) {
+    case 'errorState':
+        //this key should do nothing in this case
+        break;
+    case 'answerShowing':
+        //we have started keying in the first number of a new calculation
+        stateOfCalc = 'inputtingFirstNumber';
+        displayString = '1';
+        displayNumber = 1;
+        firstString = '1';
+        firstNumber = 1;
+        display.textContent = '1';
+        break;
+    case 'inputtingFirstNumber':
+        //we were already keying in first number of a new calculation
+        firstString = addOneDigit(firstString,'1');
+        firstNumber = +firstString;
+        displayString = firstString;
+        displayNumber = firstNumber;
+        display.textContent = firstString;
+        break;
+    case 'needSecondNumber':
+        //we are starting keying in the second number of the calculation
+        stateOfCalc = 'inputtingSecondNumber';
+        displayString = '1';
+        displayNumber = 1;
+        secondString = '1';
+        secondNumber = 1;
+        display.textContent = '1';
+        break;
+    case 'inputtingSecondNumber':
+        //we were already keying in the second number of the calculation
+        secondString = addOneDigit(secondString,'1');
+        secondNumber = +secondString;
+        displayNumber = secondNumber;
+        display.textContent = secondString;
+        break;
+    }
+    
 });
+
+
+
+
+
+
+
 
 zero.addEventListener('click',() => {
     displayString = addOneDigit(displayString,'0');
