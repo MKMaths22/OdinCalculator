@@ -137,9 +137,9 @@ function digitClicked(digit)
     }
 }    
 
-clear.addEventListener('click', () => restoreInitial());
+clear.addEventListener('click', () => clearClicked());
 
-function restoreInitial() 
+function clearClicked() 
 {
   display.textContent = '0';
   firstNumber = 0;
