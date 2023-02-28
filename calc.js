@@ -42,13 +42,26 @@ case('Add'):
 
 let display = document.querySelector('.displaypara');
 let displayString = display.textContent;
-console.log(displayString);
 let displayNumber = +displayString;
-console.log(displayNumber);
 
 let zero = document.querySelector('#zero');
 let one = document.querySelector('#one');
 let two = document.querySelector('#two');
+let three = document.querySelector('#three');
+let four = document.querySelector('#four');
+let five = document.querySelector('#five');
+let six = document.querySelector('#six');
+let seven = document.querySelector('#seven');
+let eight = document.querySelector('#eight');
+let nine = document.querySelector('#nine');
+let point = document.querySelector('#point');
+let equals = document.querySelector('#equals');
+let times = document.querySelector('#times');
+let plus = document.querySelector('#plus');
+let minus = document.querySelector('#minus');
+let divide = document.querySelector('#divide');
+let del = document.querySelector('#del');
+let clear = document.querySelector('#clear');
 
 function addOneDigit(string,digit) 
 {
@@ -56,14 +69,12 @@ function addOneDigit(string,digit)
   else
     if (string.length < 12) newString = string + digit;
     else newString = string;
-  console.log(`newString equals ${newString}`);
   return newString;
 }
 
 one.addEventListener('click',() => {
     displayString = addOneDigit(displayString,'1');
     displayNumber = +displayString;
-    console.log(displayNumber);
     display.textContent = displayString;
 });
 
@@ -71,14 +82,11 @@ zero.addEventListener('click',() => {
     displayString = addOneDigit(displayString,'0');
     displayNumber = +displayString;
     display.textContent = displayString;
-    console.log(displayNumber);
-
 })
 
 two.addEventListener('click',() => {
     displayString = addOneDigit(displayString,'2');
     displayNumber = +displayString;
-    console.log(displayNumber);
     display.textContent = displayString;
 
 })
