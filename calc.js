@@ -15,7 +15,6 @@ function Subtract(a,b)
 
 function Divide(a,b)
 {
-    if (b == 0) return 'Divide by Zero Error';
     return (a/b);
 }
 
@@ -96,7 +95,6 @@ zero.addEventListener('click',() => {digitClicked(0)});
 function digitClicked(digit) 
 {
    let digitString = String(digit);
-   console.log(`digitString = ${digitString}`);
     switch(stateOfCalc) {
       case 'errorState':
         //this key should do nothing in this case
@@ -193,8 +191,14 @@ minus.addEventListener('click', () => funcClicked('minus'));
 
 function funcClicked(func)
 {
- switch(stateOfCalc)
- {
+//console.log(`firstNumber = ${firstNumber}`);
+//console.log(`secondNumber = ${secondNumber}`);
+//console.log(`stateOfCalc = ${stateOfCalc}`);
+//console.log(`answerNumber = ${answerNumber}`);
+//console.log(`operator = ${operator}`);
+ 
+  switch(stateOfCalc)
+  {
     case('answerShowing'):
       operator = func;
       firstNumber = answerNumber;
@@ -213,6 +217,7 @@ function funcClicked(func)
 
     case('inputtingSecondNumber'):
       carryOutCalc(firstNumber,operator,secondNumber);
+      operator = func;
       stateOfCalc = 'needSecondNumber';
       break;
     }
@@ -220,6 +225,13 @@ function funcClicked(func)
 
 function carryOutCalc(a,func,b) 
 {
+  if(func === 'divide' && b === 0) 
+  {
+   display.textContent = `Cannot \/ by 0!`;
+   stateOfCalc = 'errorState';
+   return undefined;
+  }
+  
   answerNumber = Operate(a,func,b);
   //need to deal with division by zero
   operator = 'none';
@@ -229,6 +241,7 @@ function carryOutCalc(a,func,b)
   display.textContent = answerString;
   secondNumber = undefined; 
   firstNumber = answerNumber;
+  console.log(stateOfCalc);
   //how the stateOfCalc changes depends on whether we have pressed equals or another operator,
   //so this change is not included in this function
 }
@@ -237,8 +250,16 @@ equals.addEventListener('click', () => equalsClicked());
 
 function equalsClicked() 
 {
-  switch(stateOfCalc)
-  {
+
+//console.log(`firstNumber = ${firstNumber}`);
+//console.log(`secondNumber = ${secondNumber}`);
+//console.log(`stateOfCalc = ${stateOfCalc}`);
+//console.log(`answerNumber = ${answerNumber}`);
+//console.log(`operator = ${operator}`);
+ 
+ 
+   switch(stateOfCalc)
+   {
    case('errorState' || 'answerShowing'):
    //does nothing
    //DO THIS FOR EARLIER SWITCH STATEMENTS SO THAT ALL CASES ARE MENTIONED EVEN WHEN NOTHING HAPPENS 
@@ -254,12 +275,14 @@ function equalsClicked()
    case ('needSecondNumber'):
    //uses the same number again and calls firstNumber to operate on itself, e.g. 6 x = 36 behaviour
    carryOutCalc(firstNumber,operator,firstNumber);
-   stateOfCalc = 'answerShowing';
+   if (stateOfCalc !== 'errorState') stateOfCalc = 'answerShowing';
+   //if division by zero was attempted, the calc must stay in errorState
    break;
 
    case('inputtingSecondNumber'):
    carryOutCalc(firstNumber,operator,secondNumber);
-   stateofCalc = 'answerShowing';
+   if (stateOfCalc !== 'errorState') stateOfCalc = 'answerShowing';
+   //as above, errorState must be maintained
    }
 
 }
