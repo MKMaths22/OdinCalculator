@@ -212,15 +212,56 @@ function funcClicked(func)
       break;
 
     case('inputtingSecondNumber'):
-      //now the previous calculation needs to be completed and displayed, 
-      //except for division by zero case as usual,
-      //and the new firstNumber is THEN set to equal answerNumber
-      //with operator set to be 'times' and stateofCalc = 'needSecondNumber'
-    
-    case('errorState'):
-      //nothing happens here
-
+      carryOutCalc(firstNumber,operator,secondNumber);
+      stateOfCalc = 'needSecondNumber';
+      break;
     }
+}
+
+function carryOutCalc(a,func,b) 
+{
+  answerNumber = Operate(a,func,b);
+  //need to deal with division by zero
+  operator = 'none';
+  //check for scope issues, hopefully this works
+  answerString = answerNumber + '';
+  displayString = answerString;
+  display.textContent = answerString;
+  secondNumber = undefined; 
+  firstNumber = answerNumber;
+  //how the stateOfCalc changes depends on whether we have pressed equals or another operator,
+  //so this change is not included in this function
+}
+
+equals.addEventListener('click', () => equalsClicked());
+
+function equalsClicked() 
+{
+  switch(stateOfCalc)
+  {
+   case('errorState' || 'answerShowing'):
+   //does nothing
+   //DO THIS FOR EARLIER SWITCH STATEMENTS SO THAT ALL CASES ARE MENTIONED EVEN WHEN NOTHING HAPPENS 
+   break;
+   
+   case('inputtingFirstNumber'):
+   //commits you to the number you have keyed in so far, so it becomes an 'answer'
+   answerNumber = firstNumber;
+   answerString = firstString;
+   stateOfCalc = 'answerShowing';
+   break;
+   
+   case ('needSecondNumber'):
+   //uses the same number again and calls firstNumber to operate on itself, e.g. 6 x = 36 behaviour
+   carryOutCalc(firstNumber,operator,firstNumber);
+   stateOfCalc = 'answerShowing';
+   break;
+
+   case('inputtingSecondNumber'):
+   carryOutCalc(firstNumber,operator,secondNumber);
+   stateofCalc = 'answerShowing';
+   }
+
 }
 
 //point.addEventListener('click',() => pointClicked());
