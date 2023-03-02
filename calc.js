@@ -218,7 +218,8 @@ function funcClicked(func)
     case('inputtingSecondNumber'):
       carryOutCalc(firstNumber,operator,secondNumber);
       operator = func;
-      stateOfCalc = 'needSecondNumber';
+      if (stateOfCalc !== 'errorState') stateOfCalc = 'needSecondNumber';
+      //if the carryOutCalc was a division by zero the errorState must be maintained
       break;
     }
 }
