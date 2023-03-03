@@ -69,6 +69,7 @@ let secondString;
 let answerNumber = 0;
 let answerString = '0';
 let operator = 'none';
+let decimalPoint = 0;
 let stateOfCalc = 'answerShowing';
 //possible states also include 'inputtingFirstNumber' 'needSecondNumber' 'inputtingSecondNumber' 'errorState'
 
@@ -76,7 +77,7 @@ function addOneDigit(string,singleDigitString)
 {
   if (string === '0') newString = singleDigitString;
   else
-    if (string.length < 12) newString = string + singleDigitString;
+    if (string.length < (12 + decimalPoint)) newString = string + singleDigitString;
     else newString = string;
   return newString;
 }
@@ -103,33 +104,27 @@ function digitClicked(digit)
         //we have started keying in the first number of a new calculation
           stateOfCalc = 'inputtingFirstNumber';
           displayString = digitString;
-          displayNumber = digit;
+          //displayNumber = digit; adding decimal point means number formed only when string complete
           firstString = digitString;
-          firstNumber = digit;
+          //firstNumber = digit; only interpret string as number when string complete
           display.textContent = digitString;
           break;
       case 'inputtingFirstNumber':
         //we were already keying in first number of a new calculation
           firstString = addOneDigit(firstString,digitString);
-          firstNumber = +firstString;
           displayString = firstString;
-          displayNumber = firstNumber;
           display.textContent = firstString;
           break;
       case 'needSecondNumber':
         //we are starting keying in the second number of the calculation
           stateOfCalc = 'inputtingSecondNumber';
           displayString = digitString;
-          displayNumber = digit;
           secondString = digitString;
-          secondNumber = digit;
           display.textContent = digitString;
           break;
       case 'inputtingSecondNumber':
         //we were already keying in the second number of the calculation
           secondString = addOneDigit(secondString,digitString);
-          secondNumber = +secondString;
-          displayNumber = secondNumber;
           display.textContent = secondString;
           break;
     }
@@ -158,22 +153,23 @@ function delClicked()
   {
   case 'inputtingFirstNumber':
     if (firstString.length > 0) 
-    { firstString = firstString.slice(0,-1);
+    { 
+      if (firstString.charAt(firstString.length - 1) === '.') decimalPoint = 0;
+      //if we are about to delete a decimal point we record that there will be no point afterwards.
+      firstString = firstString.slice(0,-1);
       if (firstString === '') firstString = '0';
       //prevents string from being empty so Del on '3' should result in '0'
-      firstNumber = +firstString;
-      displayNumber = firstNumber;
       displayString = firstString;
       display.textContent = firstString;
     }
     break;
   case 'inputtingSecondNumber':
     if (secondString.length > 0)
-    { secondString = secondString.slice(0,-1);
+    { if (secondString.charAt(secondString.length - 1) === '.') decimalPoint = 0;
+      //if we are about to delete a decimal point we record that there will be no point afterwards.
+      secondString = secondString.slice(0,-1);
       if (secondString === '') secondString = '0';
       //as above, prevents string from being empty
-      secondNumber = +secondString;
-      displayNumber = secondNumber;
       displayString = secondString;
       display.textContent = secondString;
 
@@ -212,10 +208,15 @@ function funcClicked(func)
 
     case('inputtingFirstNumber'):
       operator = func;
+      //THIS IS WHERE THE FUNCTION IS NEEDED TO GET THE STRING INTERPRETED AS A NUMBER
+      firstNumber = turnStringIntoNumber(firstString);
+      //MUST DEFINE FUNCTION turnStringIntoNumber which also resets decimalPoint to zero
       stateOfCalc = 'needSecondNumber';
       break;
 
     case('inputtingSecondNumber'):
+      //as above need to turn secondString into a number before doing calculation
+      secondNumber = turnStringIntoNumber(secondString);
       carryOutCalc(firstNumber,operator,secondNumber);
       operator = func;
       if (stateOfCalc !== 'errorState') stateOfCalc = 'needSecondNumber';
@@ -242,7 +243,7 @@ function carryOutCalc(a,func,b)
   display.textContent = answerString;
   secondNumber = undefined; 
   firstNumber = answerNumber;
-  console.log(stateOfCalc);
+  //console.log(stateOfCalc);
   //how the stateOfCalc changes depends on whether we have pressed equals or another operator,
   //so this change is not included in this function
 }
@@ -251,14 +252,6 @@ equals.addEventListener('click', () => equalsClicked());
 
 function equalsClicked() 
 {
-
-//console.log(`firstNumber = ${firstNumber}`);
-//console.log(`secondNumber = ${secondNumber}`);
-//console.log(`stateOfCalc = ${stateOfCalc}`);
-//console.log(`answerNumber = ${answerNumber}`);
-//console.log(`operator = ${operator}`);
- 
- 
    switch(stateOfCalc)
    {
    case('errorState' || 'answerShowing'):
@@ -268,8 +261,9 @@ function equalsClicked()
    
    case('inputtingFirstNumber'):
    //commits you to the number you have keyed in so far, so it becomes an 'answer'
+   firstNumber = turnStringIntoNumber(firstString);
    answerNumber = firstNumber;
-   answerString = firstString;
+   display.textContent = answerNumber + '';
    stateOfCalc = 'answerShowing';
    break;
    
@@ -281,6 +275,7 @@ function equalsClicked()
    break;
 
    case('inputtingSecondNumber'):
+   secondNumber = turnStringIntoNumber(secondString);
    carryOutCalc(firstNumber,operator,secondNumber);
    if (stateOfCalc !== 'errorState') stateOfCalc = 'answerShowing';
    //as above, errorState must be maintained
@@ -288,10 +283,16 @@ function equalsClicked()
 
 }
 
-//point.addEventListener('click',() => pointClicked());
-//Quite a bit of extra logic has to be included to let people input decimals. The code below DOES NOT WORK because the
-//conversion from strings to numbers doesn't work when there are points in the strings (except at the end).
-//Also we will have to keep track of whether there is a decimal point in the number already or not, etc..
+point.addEventListener('click',() => pointClicked());
+//my approach is to treat inputted numbers as a string until they are used for calculations.
+//For inputting strings, initial zeros are ignored, except for a single zero
+//starting with a decimal point is equivalent to 0 first then a point (or any number of zeros before the point)
+//total length of the string is limited by (12 + decimalPoint) where decimalPoint variable 
+//records whether a point has already been included in the string.
+//This allows to enforce rule of only one point allowed in string, otherwise Syntax Error
+//If calc enters errorState because of this, must make sure that errorState is maintained at the next click
+//THEN code has to interpret the string as a number ONLY when we are finished inputting that number
+//so my calculator has to do that at the right stage.
 //function pointClicked()
 //{
 //  switch(stateOfCalc)
