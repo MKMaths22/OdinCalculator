@@ -135,6 +135,7 @@ clear.addEventListener('click', () => clearClicked());
 function clearClicked() 
 {
   display.textContent = '0';
+  decimalPoint = 0;
   firstNumber = 0;
   firstString = '0';
   secondNumber = undefined;
