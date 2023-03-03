@@ -327,7 +327,7 @@ function pointClicked()
         //no Syntax Error occurs if max length 12 has already been reached in the inputted number
         //in any case if length is at least 12, decimal point does nothing at all 
    
-        case('needNewNumber'):
+        case 'needSecondNumber':
         secondString = '0.';
         stateOfCalc = 'inputtingSecondNumber';
         displayString = '0.';
