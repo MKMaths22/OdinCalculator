@@ -196,28 +196,31 @@ function funcClicked(func)
  
   switch(stateOfCalc)
   {
-    case('answerShowing'):
+    case 'answerShowing':
       operator = func;
       firstNumber = answerNumber;
       stateOfCalc = 'needSecondNumber';
       break;
     
-    case('needSecondNumber'):
+    case 'needSecondNumber':
       display.textContent = 'Syntax Error!';
       stateOfCalc = 'errorState';
       break;
 
-    case('inputtingFirstNumber'):
+    case 'inputtingFirstNumber':
       operator = func;
       //THIS IS WHERE THE FUNCTION IS NEEDED TO GET THE STRING INTERPRETED AS A NUMBER
-      firstNumber = turnStringIntoNumber(firstString);
-      //MUST DEFINE FUNCTION turnStringIntoNumber which also resets decimalPoint to zero
+      firstNumber = +firstString;
+      decimalPoint = 0;
+      display.textContent = firstNumber + '';
       stateOfCalc = 'needSecondNumber';
       break;
 
-    case('inputtingSecondNumber'):
+    case 'inputtingSecondNumber':
       //as above need to turn secondString into a number before doing calculation
-      secondNumber = turnStringIntoNumber(secondString);
+      secondNumber = +secondString;
+      decimalPoint = 0;
+      display.textContent = secondNumber + '';
       carryOutCalc(firstNumber,operator,secondNumber);
       operator = func;
       if (stateOfCalc !== 'errorState') stateOfCalc = 'needSecondNumber';
@@ -260,23 +263,26 @@ function equalsClicked()
    //DO THIS FOR EARLIER SWITCH STATEMENTS SO THAT ALL CASES ARE MENTIONED EVEN WHEN NOTHING HAPPENS 
    break;
    
-   case('inputtingFirstNumber'):
+   case 'inputtingFirstNumber':
    //commits you to the number you have keyed in so far, so it becomes an 'answer'
-   firstNumber = turnStringIntoNumber(firstString);
+   firstNumber = +firstString;
+   decimalPoint = 0;
+   display.textContent = firstNumber + '';
    answerNumber = firstNumber;
-   display.textContent = answerNumber + '';
    stateOfCalc = 'answerShowing';
    break;
    
-   case ('needSecondNumber'):
+   case 'needSecondNumber':
    //uses the same number again and calls firstNumber to operate on itself, e.g. 6 x = 36 behaviour
    carryOutCalc(firstNumber,operator,firstNumber);
    if (stateOfCalc !== 'errorState') stateOfCalc = 'answerShowing';
    //if division by zero was attempted, the calc must stay in errorState
    break;
 
-   case('inputtingSecondNumber'):
-   secondNumber = turnStringIntoNumber(secondString);
+   case 'inputtingSecondNumber':
+   secondNumber = +secondString;
+   decimalPoint = 0;
+   display.textContent = secondNumber + '';
    carryOutCalc(firstNumber,operator,secondNumber);
    if (stateOfCalc !== 'errorState') stateOfCalc = 'answerShowing';
    //as above, errorState must be maintained
@@ -294,41 +300,54 @@ point.addEventListener('click',() => pointClicked());
 //If calc enters errorState because of this, must make sure that errorState is maintained at the next click
 //THEN code has to interpret the string as a number ONLY when we are finished inputting that number
 //so my calculator has to do that at the right stage.
-//function pointClicked()
-//{
-//  switch(stateOfCalc)
- // {
- // case('answerShowing'):
- //   firstString = '0.';
- //   firstNumber = 0;
-  //  stateOfCalc = 'inputtingFirstNumber';
-  //  displayString = '0.';
-  //  display.textContent = displayString;
-  //  break;
+function pointClicked()
+{
+  switch(stateOfCalc)
+  {
+       case 'answerShowing':
+       firstString = '0.';
+       stateOfCalc = 'inputtingFirstNumber';
+       displayString = '0.';
+       display.textContent = displayString;
+       decimalPoint = 1;
+       break;
 
-//  case('inputtingFirstNumber'):
-//     firstString += '.';
- //    firstNumber = +firstString;
- //    console.log(`firstNumber = ${firstNumber}`);
- //    displayString = firstString;
- //    displayNumber = firstNumber;
- //    display.textContent = displayString;
- //    break;
-  
- // case('needNewNumber'):
- //   secondString = '0.';
- //   secondNumber = 0;
- //   stateOfCalc = 'inputtingSecondNumber';
-  //  displayString = secondString;
-  //  display.textContent = displayString;
- //   break;
+       case 'inputtingFirstNumber':    
+       if (decimalPoint === 1 && firstString.length < 13) 
+          {stateOfCalc = 'errorState';
+           display.textContent = 'Syntax Error';
+          }  
+       else if (firstString.length < 12)  
+          {firstString += '.';
+           decimalPoint = 1;
+           displayString = firstString;
+           display.textContent = firstString;
+          }
+        break;
+        //no Syntax Error occurs if max length 12 has already been reached in the inputted number
+        //in any case if length is at least 12, decimal point does nothing at all 
+   
+        case('needNewNumber'):
+        secondString = '0.';
+        stateOfCalc = 'inputtingSecondNumber';
+        displayString = '0.';
+        display.textContent = displayString;
+        decimalPoint = 1;
+        break;
 
-//  case('inputtingSecondNumber'):
- //   secondString += '.';
- //   secondNumber = +secondString;
- //   displayString = secondString;
- //   display.textContent = displayString;
- //   break;
-
- // }
-//}
+        case 'inputtingSecondNumber':    
+       if (decimalPoint === 1 && secondString.length < 13) 
+          {stateOfCalc = 'errorState';
+           display.textContent = 'Syntax Error';
+          }  
+       else if (secondString.length < 12)  
+          {secondString += '.';
+           decimalPoint = 1;
+           displayString = secondString;
+           display.textContent = secondString;
+          }
+        break;
+        //no Syntax Error occurs if max length 12 has already been reached in the inputted number
+        //in any case if length is at least 12, decimal point does nothing at all 
+    }
+}
