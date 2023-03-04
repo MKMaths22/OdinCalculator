@@ -249,11 +249,14 @@ function carryOutCalc(a,func,b)
   secondNumber = undefined;
   //resetting the absence of an operator or secondNumber, ready for a new calculation later
   answerString = displayNumber + '';
-  let isThereADecimalPoint = 0;
-  for (let i = 1; i < answerString.length; i++) {if (answerString.charAt(i) === '.') isThereADecimalPoint = 1}
-  //to determine if the answerString has a decimal point in it 
-  display.textContent = answerString.slice(0,12 + isThereADecimalPoint);
-  //and then display just 12 characters, or 13 including a decimal point
+  let decimalPointAndOrMinus = 0;
+  decimalPointAndOrMinus += (answerNumber < 0);
+  //detecting a minus sign if answer is negative
+  for (let i = 1; i < answerString.length; i++) {if (answerString.charAt(i) === '.') decimalPointAndOrMinus += 1}
+  console.log(`decimalPointAndOrMinus = ${decimalPointAndOrMinus}`);
+  //to determine if the answerString has a decimal point and or a minus in it 
+  display.textContent = answerString.slice(0,12 + decimalPointAndOrMinus);
+  //and then display just 12 characters, or 13 including a decimal point or equals or 14 including both
   //console.log(stateOfCalc);
   //how the stateOfCalc changes depends on whether we have pressed equals or another operator,
   //so this change is not included in this function
