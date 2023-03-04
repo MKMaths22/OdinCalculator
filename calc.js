@@ -209,9 +209,10 @@ function funcClicked(func)
 
     case 'inputtingFirstNumber':
       operator = func;
-      //THIS IS WHERE THE FUNCTION IS NEEDED TO GET THE STRING INTERPRETED AS A NUMBER
+      //Now the inputted string needs to be interpreted as a number. Javascript gets rid of trailing zeroes automatically
       firstNumber = +firstString;
       decimalPoint = 0;
+      //decimalPoint resets because we have finished inputting a number
       display.textContent = firstNumber + '';
       stateOfCalc = 'needSecondNumber';
       break;
@@ -220,6 +221,7 @@ function funcClicked(func)
       //as above need to turn secondString into a number before doing calculation
       secondNumber = +secondString;
       decimalPoint = 0;
+      //decimalPoint resets because we have finished inputting a number
       display.textContent = secondNumber + '';
       carryOutCalc(firstNumber,operator,secondNumber);
       operator = func;
@@ -233,15 +235,14 @@ function carryOutCalc(a,func,b)
 {
   if(func === 'divide' && b === 0) 
   {
-   display.textContent = `Cannot \/ by 0!`;
+   display.textContent = `Cannot ${divide.textContent} by 0!`;
    stateOfCalc = 'errorState';
    return undefined;
   }
-  
+  //if division by zero attempted, an error is displayed
   answerNumber = Operate(a,func,b);
-  //need to deal with division by zero
   operator = 'none';
-  //check for scope issues, hopefully this works
+  //resetting the absence of an operator, ready for a new calculation later
   answerString = answerNumber + '';
   displayString = answerString;
   display.textContent = answerString;
