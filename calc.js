@@ -241,16 +241,37 @@ function carryOutCalc(a,func,b)
   }
   //if division by zero attempted, an error is displayed
   answerNumber = Operate(a,func,b);
-  operator = 'none';
-  //resetting the absence of an operator, ready for a new calculation later
-  answerString = answerNumber + '';
-  displayString = answerString;
-  display.textContent = answerString;
-  secondNumber = undefined; 
   firstNumber = answerNumber;
+  displayNumber = roundTheAnswer(answerNumber);
+  //Javascript will store the answer as precisely as possible but
+  //the calculator needs to display a rounded version of that value
+  operator = 'none';
+  secondNumber = undefined;
+  //resetting the absence of an operator or secondNumber, ready for a new calculation later
+  answerString = displayNumber + '';
+  display.textContent = answerString;
   //console.log(stateOfCalc);
   //how the stateOfCalc changes depends on whether we have pressed equals or another operator,
   //so this change is not included in this function
+}
+
+function roundTheAnswer(number)
+//without this code 6.9 divided by 3 = 2.30000000 on display, which is unsatisfactory
+{
+ let magnitude = 0;
+ let test = Math.abs(number);
+ //we will measure the magnitude before rounding
+ //loop MUST EXIT if number is too large
+ while (test >= Math.pow(10,magnitude) && (magnitude < 12)) magnitude += 1;
+//magnitude is number of digits before the decimal point capped at 12
+let largeNumber = number * Math.pow(10,12 - magnitude);
+//multiplying by appropriate power of 10 to make it a 12 digit number OR if
+//original number is small, such that rounding this number to nearest integer
+//and dividing by 10 to the 12 will have rounded to 12 decimal places 
+if ((largeNumber - Math.floor(largeNumber)) < 0.5) largeNumber = Math.floor(largeNumber);
+else largeNumber = Math.floor(largeNumber) + 1;
+//Now restore initial order of magnitude
+return largeNumber * Math.pow(10,magnitude - 12);
 }
 
 equals.addEventListener('click', () => equalsClicked());
