@@ -285,10 +285,44 @@ else largeNumber = Math.floor(largeNumber) + 1;
 //Now restore initial order of magnitude
 console.log(`rounded largeNumber = ${largeNumber}`);
 let roundedResult = largeNumber; 
-for (let i = 0; i<(12 - magnitude); i++) roundedResult = roundedResult * 0.1; 
+//now get Javascript to put the decimal point back in correctly to the new numbers manually
+//because Javascript cannot divide by 10 accurately (!)
+for (let i = 0; i<(12 - magnitude); i++) roundedResult = divideBy10(roundedResult); 
 //return largeNumber * Math.pow(10,magnitude - 12);
 return roundedResult;
 }
+
+function divideBy10(number)
+{
+if (number === 0) return 0;
+
+//so we can assume the number is non zero for the rest of this function code
+
+let string = number + '';
+//converts number into string
+let wherePoint = 0;
+//find where there is a decimal point
+for (let i = 1; i < string.length; i++) 
+ {
+  if (string.charAt(i) === '.') wherePoint = i;
+ }
+//decimal point cannot be first character so 0 is unambigious for no decimal point 
+if (wherePoint > 0)
+   {
+   newString = string.slice(0,wherePoint - 1) + '.' + string.charAt(wherePoint - 1) + string.slice(wherePoint + 1);
+   newNumber = +newString;
+   //Javascript IS HAPPY to convert a string such as '.34' into the number 0.34 (!)
+   return newNumber;
+   }
+//if wherePoint = 0 there is no decimal point so we must insert one
+   newString = string.slice(0,-1) + '.' + string.charAt(string.length - 1);
+   newNumber = +newString;
+   return newNumber;
+}
+
+console.log(divideBy10(-450));
+
+
 
 equals.addEventListener('click', () => equalsClicked());
 
