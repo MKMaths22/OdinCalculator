@@ -249,7 +249,11 @@ function carryOutCalc(a,func,b)
   secondNumber = undefined;
   //resetting the absence of an operator or secondNumber, ready for a new calculation later
   answerString = displayNumber + '';
-  display.textContent = answerString;
+  let isThereADecimalPoint = 0;
+  for (let i = 1; i < answerString.length; i++) {if (answerString.charAt(i) === '.') isThereADecimalPoint = 1}
+  //to determine if the answerString has a decimal point in it 
+  display.textContent = answerString.slice(0,12 + isThereADecimalPoint);
+  //and then display just 12 characters, or 13 including a decimal point
   //console.log(stateOfCalc);
   //how the stateOfCalc changes depends on whether we have pressed equals or another operator,
   //so this change is not included in this function
@@ -258,20 +262,29 @@ function carryOutCalc(a,func,b)
 function roundTheAnswer(number)
 //without this code 6.9 divided by 3 = 2.30000000 on display, which is unsatisfactory
 {
+ console.log(`number = ${number}`);
  let magnitude = 0;
  let test = Math.abs(number);
+ console.log(`test = ${test}`);
  //we will measure the magnitude before rounding
  //loop MUST EXIT if number is too large
  while (test >= Math.pow(10,magnitude) && (magnitude < 12)) magnitude += 1;
+ if (magnitude === 0) magnitude = 1;
 //magnitude is number of digits before the decimal point capped at 12
+//due to 0. at the start we only want to multiply by 10 raised to 11 for numbers less than 1
 let largeNumber = number * Math.pow(10,12 - magnitude);
+console.log(`largeNumber = ${largeNumber}`);
 //multiplying by appropriate power of 10 to make it a 12 digit number OR if
 //original number is small, such that rounding this number to nearest integer
 //and dividing by 10 to the 12 will have rounded to 12 decimal places 
 if ((largeNumber - Math.floor(largeNumber)) < 0.5) largeNumber = Math.floor(largeNumber);
 else largeNumber = Math.floor(largeNumber) + 1;
 //Now restore initial order of magnitude
-return largeNumber * Math.pow(10,magnitude - 12);
+console.log(`rounded largeNumber = ${largeNumber}`);
+let roundedResult = largeNumber; 
+for (let i = 0; i<(12 - magnitude); i++) roundedResult = roundedResult * 0.1; 
+//return largeNumber * Math.pow(10,magnitude - 12);
+return roundedResult;
 }
 
 equals.addEventListener('click', () => equalsClicked());
