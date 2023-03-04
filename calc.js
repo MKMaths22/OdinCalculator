@@ -318,11 +318,8 @@ if (wherePoint > 0)
    newString = string.slice(0,-1) + '.' + string.charAt(string.length - 1);
    newNumber = +newString;
    return newNumber;
+   //Javascript does get rid of trailing zeros and decimal point automatically so 450 gives 45 not 45.0 or 45.
 }
-
-console.log(divideBy10(-450));
-
-
 
 equals.addEventListener('click', () => equalsClicked());
 
