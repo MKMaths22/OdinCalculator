@@ -29,8 +29,8 @@ button {
     justify-content: space-around;
     align-items: center;
     box-sizing: border-box;
-    width: min(900px,80vw);
-    height: min(1200px,96vw);
+    width: min(600px,80vw);
+    height: min(720px,96vw);
     border: 5px solid black;
     background-color: grey;
 }
@@ -89,7 +89,9 @@ button {
 
 
 
-
+#del {
+    font-size: min(45px,4.5vw);
+}
 
 
 .calcbutton.point {
@@ -98,7 +100,7 @@ button {
 }
 
 .calcbutton.clear {
-    font-size: min(39px,3.4vw);
+    font-size: min(30px,3.5vw);
 }
 
 .calcbutton:hover {
