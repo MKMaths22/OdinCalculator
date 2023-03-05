@@ -107,12 +107,14 @@ function digitClicked(digit)
           //displayNumber = digit; adding decimal point means number formed only when string complete
           firstString = digitString;
           //firstNumber = digit; only interpret string as number when string complete
+          display.style.fontSize = "100%";
           display.textContent = digitString;
           break;
       case 'inputtingFirstNumber':
         //we were already keying in first number of a new calculation
           firstString = addOneDigit(firstString,digitString);
           displayString = firstString;
+          display.style.fontSize = "100%";
           display.textContent = firstString;
           break;
       case 'needSecondNumber':
@@ -120,11 +122,13 @@ function digitClicked(digit)
           stateOfCalc = 'inputtingSecondNumber';
           displayString = digitString;
           secondString = digitString;
+          display.style.fontSize = "100%";
           display.textContent = digitString;
           break;
       case 'inputtingSecondNumber':
         //we were already keying in the second number of the calculation
           secondString = addOneDigit(secondString,digitString);
+          display.style.fontSize = "100%";
           display.textContent = secondString;
           break;
     }
@@ -162,6 +166,7 @@ function delClicked()
       if (firstString === '') firstString = '0';
       //prevents string from being empty so Del on '3' should result in '0'
       displayString = firstString;
+      display.style.fontSize = "100%";
       display.textContent = firstString;
     }
     break;
@@ -173,6 +178,7 @@ function delClicked()
       if (secondString === '') secondString = '0';
       //as above, prevents string from being empty
       displayString = secondString;
+      display.style.fontSize = "100%";
       display.textContent = secondString;
 
     }
@@ -204,7 +210,7 @@ function funcClicked(func)
       break;
     
     case 'needSecondNumber':
-      display.style.Size = "100%";
+      display.style.fontSize = "100%";
       display.textContent = 'Syntax Error!';
       stateOfCalc = 'errorState';
       break;
@@ -266,12 +272,16 @@ function carryOutCalc(a,func,b)
   let test = Math.abs(answerNumber);
   let maxDisplay = Math.pow(10,12);
   let i = 11;
-  if (test >= maxDisplay)
+  if (test >= (maxDisplay - 0.5))
     {
-    while ((test >= maxDisplay) && (i <= 98))
+    while ((test >= maxDisplay) && (i <= 99))
       {test = test/10; i++}
-  display.textContent += `> e${i}`;
-  display.style.fontSize = "75%";
+  display.textContent += ` > e${i}`;
+   if (i === 100) {display.textContent = `Error! Too large.`;
+                   stateOfCalc = 'errorState';
+                  }
+                  else display.style.fontSize = "75%";
+  //only changes size of text if the output is large but not bigger than 10 to the 99 in magnitude
     }
     
   //let display show number bigger than 10 to the power i 

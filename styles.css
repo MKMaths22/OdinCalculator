@@ -41,6 +41,9 @@ button {
     font-size: min(9vw,90px);
     background-color: rgb(200,200,200);
     overflow: hidden;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 .displaypara {
