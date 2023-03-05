@@ -135,6 +135,7 @@ clear.addEventListener('click', () => clearClicked());
 function clearClicked() 
 {
   display.textContent = '0';
+  display.style.fontSize = "100%";
   decimalPoint = 0;
   firstNumber = 0;
   firstString = '0';
@@ -203,6 +204,7 @@ function funcClicked(func)
       break;
     
     case 'needSecondNumber':
+      display.style.Size = "100%";
       display.textContent = 'Syntax Error!';
       stateOfCalc = 'errorState';
       break;
@@ -213,6 +215,7 @@ function funcClicked(func)
       firstNumber = +firstString;
       decimalPoint = 0;
       //decimalPoint resets because we have finished inputting a number
+      display.style.fontSize = "100%";
       display.textContent = firstNumber + '';
       stateOfCalc = 'needSecondNumber';
       break;
@@ -222,6 +225,7 @@ function funcClicked(func)
       secondNumber = +secondString;
       decimalPoint = 0;
       //decimalPoint resets because we have finished inputting a number
+      display.style.fontSize = "100%";
       display.textContent = secondNumber + '';
       carryOutCalc(firstNumber,operator,secondNumber);
       operator = func;
@@ -233,6 +237,7 @@ function funcClicked(func)
 
 function carryOutCalc(a,func,b) 
 {
+  display.style.fontSize = "100%";
   if(func === 'divide' && b === 0) 
   {
    display.textContent = `Cannot ${divide.textContent} by 0!`;
@@ -256,8 +261,20 @@ function carryOutCalc(a,func,b)
   console.log(`decimalPointAndOrMinus = ${decimalPointAndOrMinus}`);
   //to determine if the answerString has a decimal point and or a minus in it 
   display.textContent = answerString.slice(0,12 + decimalPointAndOrMinus);
-  //and then display just 12 characters, or 13 including a decimal point or equals or 14 including both
-  //console.log(stateOfCalc);
+  //if the answer is too large for 12 digits, i.e. at least 10 raised to the 12 in magnitude, the 
+  //calculation should be valid but the display shows that not all of the number is showing.
+  let test = Math.abs(answerNumber);
+  let maxDisplay = Math.pow(10,12);
+  let i = 11;
+  if (test >= maxDisplay)
+    {
+    while ((test >= maxDisplay) && (i <= 98))
+      {test = test/10; i++}
+  display.textContent += `> e${i}`;
+  display.style.fontSize = "75%";
+    }
+    
+  //let display show number bigger than 10 to the power i 
   //how the stateOfCalc changes depends on whether we have pressed equals or another operator,
   //so this change is not included in this function
 }
@@ -336,6 +353,7 @@ function equalsClicked()
    //commits you to the number you have keyed in so far, so it becomes an 'answer'
    firstNumber = +firstString;
    decimalPoint = 0;
+   display.style.fontSize = "100%";
    display.textContent = firstNumber + '';
    answerNumber = firstNumber;
    stateOfCalc = 'answerShowing';
@@ -351,6 +369,7 @@ function equalsClicked()
    case 'inputtingSecondNumber':
    secondNumber = +secondString;
    decimalPoint = 0;
+   display.style.fontSize = "100%";
    display.textContent = secondNumber + '';
    carryOutCalc(firstNumber,operator,secondNumber);
    if (stateOfCalc !== 'errorState') stateOfCalc = 'answerShowing';
@@ -377,6 +396,7 @@ function pointClicked()
        firstString = '0.';
        stateOfCalc = 'inputtingFirstNumber';
        displayString = '0.';
+       display.style.fontSize = "100%";
        display.textContent = displayString;
        decimalPoint = 1;
        break;
@@ -384,12 +404,14 @@ function pointClicked()
        case 'inputtingFirstNumber':    
        if (decimalPoint === 1 && firstString.length < 13) 
           {stateOfCalc = 'errorState';
+           display.style.fontSize = "100%";
            display.textContent = 'Syntax Error';
           }  
        else if (firstString.length < 12)  
           {firstString += '.';
            decimalPoint = 1;
            displayString = firstString;
+           display.style.Size = "100%";
            display.textContent = firstString;
           }
         break;
@@ -400,6 +422,7 @@ function pointClicked()
         secondString = '0.';
         stateOfCalc = 'inputtingSecondNumber';
         displayString = '0.';
+        display.style.fontSize = "100%";
         display.textContent = displayString;
         decimalPoint = 1;
         break;
@@ -407,12 +430,14 @@ function pointClicked()
         case 'inputtingSecondNumber':    
        if (decimalPoint === 1 && secondString.length < 13) 
           {stateOfCalc = 'errorState';
+           display.style.fontSize = "100%";
            display.textContent = 'Syntax Error';
           }  
        else if (secondString.length < 12)  
           {secondString += '.';
            decimalPoint = 1;
            displayString = secondString;
+           display.style.fontSize = "100%";
            display.textContent = secondString;
           }
         break;
