@@ -278,6 +278,7 @@ function carryOutCalc(a,func,b)
       {test = test/10; i++}
   display.textContent += ` > e${i}`;
    if (i === 100) {display.textContent = `Error! Too large.`;
+                   display.style.fontSize = "85%";
                    stateOfCalc = 'errorState';
                   }
                   else display.style.fontSize = "70%";
