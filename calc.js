@@ -280,7 +280,7 @@ function carryOutCalc(a,func,b)
    if (i === 100) {display.textContent = `Error! Too large.`;
                    stateOfCalc = 'errorState';
                   }
-                  else display.style.fontSize = "75%";
+                  else display.style.fontSize = "70%";
   //only changes size of text if the output is large but not bigger than 10 to the 99 in magnitude
     }
     

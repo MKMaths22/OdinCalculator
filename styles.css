@@ -29,8 +29,8 @@ button {
     justify-content: space-around;
     align-items: center;
     box-sizing: border-box;
-    width: min(600px,80vw);
-    height: min(720px,96vw);
+    width: max(min(600px,80vw),280px);
+    height: max(min(660px,88vw),308px);
     border: 5px solid black;
     background-color: grey;
 }
@@ -77,30 +77,30 @@ button {
     align-items: center;
     font-family: Verdana, 'Times New Roman';
     font-weight: bold;
-    font-size: min(53px,5vw);
+    font-size: max(min(53px,5vw), 20px);
     border-radius: 12%;
 
 }
 
 .calcbutton.times, .calcbutton.divide, .calcbutton.plus, .calcbutton.minus {
-    font-size: min(55px,5.5vw);
+    font-size: max(min(55px,5.5vw), 20px);
     background-color: rgb(210, 145, 100);
 }
 
 
 
 #del {
-    font-size: min(45px,4.5vw);
+    font-size: max(min(45px,4.5vw), 17px);
 }
 
 
 .calcbutton.point {
-    font-size: min(55px,5.5vw);
+    font-size: max(min(55px,5.5vw),20px);
     padding-bottom: min(20px,2vw);
 }
 
 .calcbutton.clear {
-    font-size: min(30px,3.5vw);
+    font-size: max(min(30px,3.5vw), 13px);
 }
 
 .calcbutton:hover {
