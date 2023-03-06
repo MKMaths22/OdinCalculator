@@ -37,6 +37,9 @@ case('plus'):
 
 }
 
+//the carryOutCalc function will call the Operate function and THAT code deals with division by zero case
+//as well as rounding the answer to fit on the display
+
 }
 
 let display = document.querySelector('.displaypara');
@@ -62,6 +65,7 @@ let divide = document.querySelector('#divide');
 let del = document.querySelector('#del');
 let clear = document.querySelector('#clear');
 
+//the next nine lines define the initial state of the calculator. Pressing 'clear' will restore this.
 let firstNumber = 0;
 let firstString = '0';
 let secondNumber;
@@ -72,13 +76,17 @@ let operator = 'none';
 let decimalPoint = 0;
 let stateOfCalc = 'answerShowing';
 //possible states also include 'inputtingFirstNumber' 'needSecondNumber' 'inputtingSecondNumber' 'errorState'
+//Note that inputtingFirstNumber means we have already started inputting a number, so the previous answer is no longer showing
+//Similarly inputtingSecondNumber means we have already started.
 
 function addOneDigit(string,singleDigitString) 
 {
   if (string === '0') newString = singleDigitString;
+  //when calculator shows '0' the first digit we key in REPLACES the zero
   else
     if (string.length < (12 + decimalPoint)) newString = string + singleDigitString;
     else newString = string;
+  
   return newString;
 }
 
@@ -96,27 +104,34 @@ zero.addEventListener('click',() => {digitClicked(0)});
 function digitClicked(digit) 
 {
    let digitString = String(digit);
+    
     switch(stateOfCalc) {
+      
       case 'errorState':
         //this key should do nothing in this case
-          break;
+      break;
+      
       case 'answerShowing':
         //we have started keying in the first number of a new calculation
           stateOfCalc = 'inputtingFirstNumber';
           displayString = digitString;
-          //displayNumber = digit; adding decimal point means number formed only when string complete
+          //adding decimal point means number formed only when string complete
           firstString = digitString;
-          //firstNumber = digit; only interpret string as number when string complete
+          //only interpret string as number when string complete
           display.style.fontSize = "100%";
+          //Restoring the font size is necessary if line 316 or line 319 reduced it previously
           display.textContent = digitString;
-          break;
+      break;
+      
       case 'inputtingFirstNumber':
         //we were already keying in first number of a new calculation
           firstString = addOneDigit(firstString,digitString);
           displayString = firstString;
           display.style.fontSize = "100%";
+          //Restoring the font size is necessary if line 289 or line 292 reduced it previously
           display.textContent = firstString;
-          break;
+      break;
+      
       case 'needSecondNumber':
         //we are starting keying in the second number of the calculation
           stateOfCalc = 'inputtingSecondNumber';
@@ -124,13 +139,14 @@ function digitClicked(digit)
           secondString = digitString;
           display.style.fontSize = "100%";
           display.textContent = digitString;
-          break;
+      break;
+      
       case 'inputtingSecondNumber':
         //we were already keying in the second number of the calculation
           secondString = addOneDigit(secondString,digitString);
           display.style.fontSize = "100%";
           display.textContent = secondString;
-          break;
+      break;
     }
 }    
 
@@ -149,6 +165,7 @@ function clearClicked()
   answerString = '0';
   operator = 'none';
   stateOfCalc = 'answerShowing';
+//restores the initial state of the calculator
 }
 
 del.addEventListener('click', () => delClicked());
@@ -157,33 +174,48 @@ function delClicked()
 {
   switch(stateOfCalc) 
   {
-  case 'inputtingFirstNumber':
-    if (firstString.length > 0) 
-    { 
-      if (firstString.charAt(firstString.length - 1) === '.') decimalPoint = 0;
-      //if we are about to delete a decimal point we record that there will be no point afterwards.
-      firstString = firstString.slice(0,-1);
-      if (firstString === '') firstString = '0';
-      //prevents string from being empty so Del on '3' should result in '0'
-      displayString = firstString;
-      display.style.fontSize = "100%";
-      display.textContent = firstString;
-    }
-    break;
-  case 'inputtingSecondNumber':
-    if (secondString.length > 0)
-    { if (secondString.charAt(secondString.length - 1) === '.') decimalPoint = 0;
-      //if we are about to delete a decimal point we record that there will be no point afterwards.
-      secondString = secondString.slice(0,-1);
-      if (secondString === '') secondString = '0';
-      //as above, prevents string from being empty
-      displayString = secondString;
-      display.style.fontSize = "100%";
-      display.textContent = secondString;
+   case 'answerShowing':
+   break;
 
-    }
+   case 'inputtingFirstNumber':
+     if (firstString.length > 0) 
+     { 
+       if (firstString.charAt(firstString.length - 1) === '.') decimalPoint = 0;
+       //if we are about to delete a decimal point we record that there will be no point afterwards.
+      
+       firstString = firstString.slice(0,-1);
+       
+       if (firstString === '') firstString = '0';
+       //prevents string from being empty so Del on '3' should result in '0'
+       
+       displayString = firstString;
+       display.style.fontSize = "100%";
+       display.textContent = firstString;
+      }
     break;
-    //for the other three states of the calculator, the Del button does nothing
+  
+    case 'needSecondNumber':
+    break;
+    
+    case 'inputtingSecondNumber':
+      if (secondString.length > 0)
+        { 
+        if (secondString.charAt(secondString.length - 1) === '.') decimalPoint = 0;
+        //if we are about to delete a decimal point we record that there will be no point afterwards.
+        secondString = secondString.slice(0,-1);
+      
+        if (secondString === '') secondString = '0';
+        //as above, prevents string from being empty
+      
+        displayString = secondString;
+        display.style.fontSize = "100%";
+        display.textContent = secondString;
+        }
+    break;
+
+    case 'errorState':
+    break;
+    
   }
 
 }
@@ -207,13 +239,7 @@ function funcClicked(func)
       operator = func;
       firstNumber = answerNumber;
       stateOfCalc = 'needSecondNumber';
-      break;
-    
-    case 'needSecondNumber':
-      display.style.fontSize = "100%";
-      display.textContent = 'Syntax Error!';
-      stateOfCalc = 'errorState';
-      break;
+    break;
 
     case 'inputtingFirstNumber':
       operator = func;
@@ -224,20 +250,31 @@ function funcClicked(func)
       display.style.fontSize = "100%";
       display.textContent = firstNumber + '';
       stateOfCalc = 'needSecondNumber';
-      break;
+    break;
+
+    case 'needSecondNumber':
+       display.style.fontSize = "100%";
+       display.textContent = 'Syntax Error!';
+       stateOfCalc = 'errorState';
+    break;
 
     case 'inputtingSecondNumber':
-      //as above need to turn secondString into a number before doing calculation
-      secondNumber = +secondString;
-      decimalPoint = 0;
-      //decimalPoint resets because we have finished inputting a number
-      display.style.fontSize = "100%";
-      display.textContent = secondNumber + '';
-      carryOutCalc(firstNumber,operator,secondNumber);
-      operator = func;
-      if (stateOfCalc !== 'errorState') stateOfCalc = 'needSecondNumber';
-      //if the carryOutCalc was a division by zero the errorState must be maintained
-      break;
+        //as above need to turn secondString into a number before doing calculation
+        secondNumber = +secondString;
+        decimalPoint = 0;
+        //decimalPoint resets because we have finished inputting a number
+        
+        display.style.fontSize = "100%";
+        display.textContent = secondNumber + '';
+        carryOutCalc(firstNumber,operator,secondNumber);
+        operator = func;
+        
+         if (stateOfCalc !== 'errorState') stateOfCalc = 'needSecondNumber';
+        //if the carryOutCalc was a division by zero the errorState must be maintained
+    break;
+
+    case 'errorState':
+    break;
     }
 }
 
@@ -245,45 +282,54 @@ function carryOutCalc(a,func,b)
 {
   display.style.fontSize = "100%";
   if(func === 'divide' && b === 0) 
-  {
-   display.textContent = `Cannot ${divide.textContent} by 0!`;
-   stateOfCalc = 'errorState';
-   return undefined;
-  }
+    {
+     display.textContent = `Cannot ${divide.textContent} by 0!`;
+     stateOfCalc = 'errorState';
+     return undefined;
+    }
   //if division by zero attempted, an error is displayed
+  
   answerNumber = Operate(a,func,b);
   firstNumber = answerNumber;
   displayNumber = roundTheAnswer(answerNumber);
   //Javascript will store the answer as precisely as possible but
   //the calculator needs to display a rounded version of that value
+  
   operator = 'none';
   secondNumber = undefined;
   //resetting the absence of an operator or secondNumber, ready for a new calculation later
+  
   answerString = displayNumber + '';
   let decimalPointAndOrMinus = 0;
   decimalPointAndOrMinus += (answerNumber < 0);
   //detecting a minus sign if answer is negative
-  for (let i = 1; i < answerString.length; i++) {if (answerString.charAt(i) === '.') decimalPointAndOrMinus += 1}
-  console.log(`decimalPointAndOrMinus = ${decimalPointAndOrMinus}`);
+  
+  for (let i = 1; i < answerString.length; i++) {if (answerString.charAt(i) === '.') decimalPointAndOrMinus += 1};
   //to determine if the answerString has a decimal point and or a minus in it 
+  
   display.textContent = answerString.slice(0,12 + decimalPointAndOrMinus);
   //if the answer is too large for 12 digits, i.e. at least 10 raised to the 12 in magnitude, the 
   //calculation should be valid but the display shows that not all of the number is showing.
+  
   let test = Math.abs(answerNumber);
   let maxDisplay = Math.pow(10,12);
   let i = 11;
+  
   if (test >= (maxDisplay - 0.5))
-    {
+  {
+    
     while ((test >= maxDisplay) && (i <= 99))
       {test = test/10; i++}
-  display.textContent += ` > e${i}`;
-   if (i === 100) {display.textContent = `Error! Too large.`;
+  
+    display.textContent += ` > e${i}`;
+    if (i === 100) 
+      {display.textContent = `Error! Too large.`;
                    display.style.fontSize = "85%";
                    stateOfCalc = 'errorState';
-                  }
-                  else display.style.fontSize = "70%";
+      }
+    else display.style.fontSize = "70%";
   //only changes size of text if the output is large but not bigger than 10 to the 99 in magnitude
-    }
+  }
     
   //let display show number bigger than 10 to the power i 
   //how the stateOfCalc changes depends on whether we have pressed equals or another operator,
@@ -293,99 +339,112 @@ function carryOutCalc(a,func,b)
 function roundTheAnswer(number)
 //without this code 6.9 divided by 3 = 2.30000000 on display, which is unsatisfactory
 {
- console.log(`number = ${number}`);
- let magnitude = 0;
- let test = Math.abs(number);
- console.log(`test = ${test}`);
- //we will measure the magnitude before rounding
- //loop MUST EXIT if number is too large
- while (test >= Math.pow(10,magnitude) && (magnitude < 12)) magnitude += 1;
- if (magnitude === 0) magnitude = 1;
-//magnitude is number of digits before the decimal point capped at 12
+
+  let magnitude = 0;
+  let test = Math.abs(number);
+ 
+  //we will measure the magnitude before rounding
+  //loop MUST EXIT if number is too large
+  while (test >= Math.pow(10,magnitude) && (magnitude < 12)) magnitude += 1;
+  
+  if (magnitude === 0) magnitude = 1;
+  //magnitude is number of digits before the decimal point capped at 12
 //due to 0. at the start we only want to multiply by 10 raised to 11 for numbers less than 1
-let largeNumber = number * Math.pow(10,12 - magnitude);
-console.log(`largeNumber = ${largeNumber}`);
-//multiplying by appropriate power of 10 to make it a 12 digit number OR if
-//original number is small, such that rounding this number to nearest integer
-//and dividing by 10 to the 12 will have rounded to 12 decimal places 
-if ((largeNumber - Math.floor(largeNumber)) < 0.5) largeNumber = Math.floor(largeNumber);
-else largeNumber = Math.floor(largeNumber) + 1;
-//Now restore initial order of magnitude
-console.log(`rounded largeNumber = ${largeNumber}`);
-let roundedResult = largeNumber; 
-//now get Javascript to put the decimal point back in correctly to the new numbers manually
-//because Javascript cannot divide by 10 accurately (!)
-for (let i = 0; i<(12 - magnitude); i++) roundedResult = divideBy10(roundedResult); 
-//return largeNumber * Math.pow(10,magnitude - 12);
-return roundedResult;
+  let largeNumber = number * Math.pow(10,12 - magnitude);
+
+  //multiplying by appropriate power of 10 to make it a 12 digit number OR if
+  //original number is small, such that rounding this number to nearest integer
+  //and dividing by 10 to the 12 will have rounded to 12 decimal places 
+  
+  if ((largeNumber - Math.floor(largeNumber)) < 0.5) largeNumber = Math.floor(largeNumber);
+  else largeNumber = Math.floor(largeNumber) + 1;
+  //Now restore initial order of magnitude
+
+  let roundedResult = largeNumber; 
+  //now get Javascript to put the decimal point back in correctly to the new numbers manually
+  //because Javascript cannot divide by 10 accurately (!)
+  
+  for (let i = 0; i<(12 - magnitude); i++) roundedResult = divideBy10(roundedResult); 
+  //return largeNumber * Math.pow(10,magnitude - 12);
+
+  return roundedResult;
 }
 
 function divideBy10(number)
 {
-if (number === 0) return 0;
+  if (number === 0) return 0;
 
-//so we can assume the number is non zero for the rest of this function code
+  //so we can assume the number is non zero for the rest of this function code
 
-let string = number + '';
-//converts number into string
-let wherePoint = 0;
-//find where there is a decimal point
-for (let i = 1; i < string.length; i++) 
- {
-  if (string.charAt(i) === '.') wherePoint = i;
- }
-//decimal point cannot be first character so 0 is unambigious for no decimal point 
-if (wherePoint > 0)
-   {
-   newString = string.slice(0,wherePoint - 1) + '.' + string.charAt(wherePoint - 1) + string.slice(wherePoint + 1);
-   newNumber = +newString;
-   //Javascript IS HAPPY to convert a string such as '.34' into the number 0.34 (!)
-   return newNumber;
-   }
-//if wherePoint = 0 there is no decimal point so we must insert one
-   newString = string.slice(0,-1) + '.' + string.charAt(string.length - 1);
-   newNumber = +newString;
-   return newNumber;
-   //Javascript does get rid of trailing zeros and decimal point automatically so 450 gives 45 not 45.0 or 45.
+  let string = number + '';
+  //converts number into string
+
+  let wherePoint = 0;
+  //find where there is a decimal point
+
+  for (let i = 1; i < string.length; i++) 
+  {
+    if (string.charAt(i) === '.') wherePoint = i;
+  }  
+  //decimal point cannot be first character so 0 is unambigious for no decimal point 
+  
+  if (wherePoint > 0)
+  {
+    newString = string.slice(0,wherePoint - 1) + '.' + string.charAt(wherePoint - 1) + string.slice(wherePoint + 1);
+    newNumber = +newString;
+    //Javascript IS HAPPY to convert a string such as '.34' into the number 0.34 (!)
+    return newNumber;
+  }
+  //if wherePoint = 0 there is no decimal point so we must insert one
+  
+  newString = string.slice(0,-1) + '.' + string.charAt(string.length - 1);
+  newNumber = +newString;
+  
+  return newNumber;
+  //Javascript does get rid of trailing zeros and decimal point automatically so 450 gives 45 not 45.0 or 45.
 }
 
 equals.addEventListener('click', () => equalsClicked());
 
 function equalsClicked() 
 {
-   switch(stateOfCalc)
-   {
-   case('errorState' || 'answerShowing'):
-   //does nothing
-   //DO THIS FOR EARLIER SWITCH STATEMENTS SO THAT ALL CASES ARE MENTIONED EVEN WHEN NOTHING HAPPENS 
-   break;
+  switch(stateOfCalc)
+  {
+    case('errorState' || 'answerShowing'):
+     //does nothing
+    break;
    
-   case 'inputtingFirstNumber':
-   //commits you to the number you have keyed in so far, so it becomes an 'answer'
-   firstNumber = +firstString;
-   decimalPoint = 0;
-   display.style.fontSize = "100%";
-   display.textContent = firstNumber + '';
-   answerNumber = firstNumber;
-   stateOfCalc = 'answerShowing';
-   break;
+    case 'inputtingFirstNumber':
+      //commits you to the number you have keyed in so far, so it becomes an 'answer'
+      firstNumber = +firstString;
+      decimalPoint = 0;
+      display.style.fontSize = "100%";
+      display.textContent = firstNumber + '';
+      answerNumber = firstNumber;
+      stateOfCalc = 'answerShowing';
+    break;
    
-   case 'needSecondNumber':
-   //uses the same number again and calls firstNumber to operate on itself, e.g. 6 x = 36 behaviour
-   carryOutCalc(firstNumber,operator,firstNumber);
-   if (stateOfCalc !== 'errorState') stateOfCalc = 'answerShowing';
-   //if division by zero was attempted, the calc must stay in errorState
-   break;
+    case 'needSecondNumber':
+     //uses the same number again and calls firstNumber to operate on itself, e.g. 6 x = 36 behaviour
+   
+      carryOutCalc(firstNumber,operator,firstNumber);
+      if (stateOfCalc !== 'errorState') stateOfCalc = 'answerShowing';
+      //if division by zero was attempted, the calc must stay in errorState
+   
+    break;
 
-   case 'inputtingSecondNumber':
-   secondNumber = +secondString;
-   decimalPoint = 0;
-   display.style.fontSize = "100%";
-   display.textContent = secondNumber + '';
-   carryOutCalc(firstNumber,operator,secondNumber);
-   if (stateOfCalc !== 'errorState') stateOfCalc = 'answerShowing';
-   //as above, errorState must be maintained
-   }
+    case 'inputtingSecondNumber':
+      secondNumber = +secondString;
+      decimalPoint = 0;
+      display.style.fontSize = "100%";
+      display.textContent = secondNumber + '';
+   
+      carryOutCalc(firstNumber,operator,secondNumber);
+     
+      if (stateOfCalc !== 'errorState') stateOfCalc = 'answerShowing';
+      //as above, errorState must be maintained
+    break;
+  }
 
 }
 
@@ -404,55 +463,63 @@ function pointClicked()
   switch(stateOfCalc)
   {
        case 'answerShowing':
-       firstString = '0.';
-       stateOfCalc = 'inputtingFirstNumber';
-       displayString = '0.';
-       display.style.fontSize = "100%";
-       display.textContent = displayString;
-       decimalPoint = 1;
+         firstString = '0.';
+         stateOfCalc = 'inputtingFirstNumber';
+         displayString = '0.';
+         display.style.fontSize = "100%";
+         display.textContent = displayString;
+         decimalPoint = 1;
        break;
 
        case 'inputtingFirstNumber':    
-       if (decimalPoint === 1 && firstString.length < 13) 
-          {stateOfCalc = 'errorState';
-           display.style.fontSize = "100%";
-           display.textContent = 'Syntax Error';
-          }  
-       else if (firstString.length < 12)  
-          {firstString += '.';
-           decimalPoint = 1;
-           displayString = firstString;
-           display.style.Size = "100%";
-           display.textContent = firstString;
-          }
+         if (decimalPoint === 1 && firstString.length < 13) 
+            {stateOfCalc = 'errorState';
+             display.style.fontSize = "100%";
+             display.textContent = 'Syntax Error';
+            }  
+         else if (firstString.length < 12)  
+            {
+            firstString += '.';
+            decimalPoint = 1;
+            displayString = firstString;
+            display.style.Size = "100%";
+            display.textContent = firstString;
+            }
         break;
         //no Syntax Error occurs if max length 12 has already been reached in the inputted number
         //in any case if length is at least 12, decimal point does nothing at all 
    
         case 'needSecondNumber':
-        secondString = '0.';
-        stateOfCalc = 'inputtingSecondNumber';
-        displayString = '0.';
-        display.style.fontSize = "100%";
-        display.textContent = displayString;
-        decimalPoint = 1;
+          secondString = '0.';
+          stateOfCalc = 'inputtingSecondNumber';
+          displayString = '0.';
+          display.style.fontSize = "100%";
+          display.textContent = displayString;
+          decimalPoint = 1;
         break;
 
         case 'inputtingSecondNumber':    
-       if (decimalPoint === 1 && secondString.length < 13) 
-          {stateOfCalc = 'errorState';
-           display.style.fontSize = "100%";
-           display.textContent = 'Syntax Error';
+          if (decimalPoint === 1 && secondString.length < 13) 
+          {
+            stateOfCalc = 'errorState';
+            display.style.fontSize = "100%";
+            display.textContent = 'Syntax Error';
           }  
-       else if (secondString.length < 12)  
-          {secondString += '.';
-           decimalPoint = 1;
-           displayString = secondString;
-           display.style.fontSize = "100%";
-           display.textContent = secondString;
+          else if (secondString.length < 12)  
+          {
+            secondString += '.';
+            decimalPoint = 1;
+            displayString = secondString;
+            display.style.fontSize = "100%";
+            display.textContent = secondString;
           }
         break;
+        
         //no Syntax Error occurs if max length 12 has already been reached in the inputted number
         //in any case if length is at least 12, decimal point does nothing at all 
+
+        case 'errorState':
+        break;
+        
     }
 }
